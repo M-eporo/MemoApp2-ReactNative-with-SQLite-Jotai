@@ -2,6 +2,7 @@ import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import { useEffect } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
 import Feather from '@expo/vector-icons/Feather';
+import MemoListItem from '../../src/components/MemoListItem';
 
 /**
  *  メモ一覧画面
@@ -41,6 +42,15 @@ export default function MemoListScreen(): React.JSX.Element {
     <View style={styles.container}>
       <Text style={styles.title}>{labelId ? `ラベルID: ${labelId}` : "すべてのメモ"}</Text>
 
+      <MemoListItem
+        name="メモ1"
+        content="メモ1の内容"
+        onPress={() => handleMemoPress("ABCD")}
+        onLongPress={() => {}}
+        onDeletePress={() => {}}
+        label={undefined}
+      />
+
       <Button title="メモ1" onPress={() => handleMemoPress("A")} />
       <Button title="メモ2" onPress={() => handleMemoPress("B")} />
     </View>
@@ -50,9 +60,7 @@ export default function MemoListScreen(): React.JSX.Element {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#efeff4'
+    
   },
   title: {
     fontSize: 20,
