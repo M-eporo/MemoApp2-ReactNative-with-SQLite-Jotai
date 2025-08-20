@@ -1,5 +1,6 @@
 import { ListItem, Button } from "@rneui/themed";
 import { StyleSheet, View } from "react-native";
+import LabelTag from "./LabelTag";
 
 type MemoListItemProps = {
     name: string;
@@ -24,6 +25,9 @@ const MemoListItem: React.FC<MemoListItemProps> = ({
     return (
         
         <ListItem.Swipeable 
+        bottomDivider
+            onPress={onPress}
+            onLongPress={() => onLongPress?.()}
             rightContent={reset => (
                 <Button
                     title="削除"
@@ -41,6 +45,10 @@ const MemoListItem: React.FC<MemoListItemProps> = ({
             <ListItem.Content>
                 <ListItem.Title style={styles.title}>{name}</ListItem.Title>
                 <ListItem.Subtitle style={styles.subTitle} numberOfLines={4}>{content}</ListItem.Subtitle>
+                {label 
+                ? <LabelTag color={label.color} name={label.name} />
+                : <></>
+                }
             </ListItem.Content>
             <ListItem.Chevron />
         </ListItem.Swipeable>
