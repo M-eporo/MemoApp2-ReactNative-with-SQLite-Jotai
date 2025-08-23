@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, Button } from 'react-native';
 import { KeyboardAvoidingView } from '@gluestack-ui/themed';
 import MemoInputForm  from "../../src/components/MemoInputForm";
+import { useAppSelector } from '../../src/app/hooks';
 
 /**
  * メモ作成画面
@@ -12,10 +13,12 @@ export default function MemoCreateScreen() {
     const [title, setTitle] = useState<string>("");
     const [content, setContent] = useState<string>("");
 
+    const selectedLabelId = useAppSelector((state) => state.label.id);
+
     useEffect(() => {
         navigation.setOptions({
             headerRight: () => {
-                return <Button title="メモ作成" onPress={handleCreatePress} />;
+                return <Button title="作成" onPress={handleCreatePress} />;
             }
         })
     }, [])
@@ -23,6 +26,7 @@ export default function MemoCreateScreen() {
      * 「作成」が押されたときの処理
      */
     const handleCreatePress = () => {
+        console.log(`メモに、ラベル ${selectedLabelId}を設定` )
         router.back();
     }
 

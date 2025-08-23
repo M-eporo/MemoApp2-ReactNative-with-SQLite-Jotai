@@ -4,6 +4,8 @@ import { router, useNavigation } from 'expo-router';
 import { useEffect } from 'react';
 import { ListItem } from "@rneui/themed";
 import LabelListItem from '../../src/components/LabelListItem';
+import { useAppDispatch, useAppSelector } from '../../src/app/hooks';
+import { setLabelId } from '../../src/features/label/labelSlice';
 
 const LABEL_DATA = [
     {
@@ -29,6 +31,8 @@ const LABEL_DATA = [
 export default function HomeScreen() {
     const navigation = useNavigation();
 
+    const dispatch = useAppDispatch();
+    // const reduxLabelId = useAppSelector((state) => state.label);
     /**
      * ナビゲーションバーのカスタマイズ
      */
@@ -44,6 +48,7 @@ export default function HomeScreen() {
      * 「すべてのメモ」が押されたときの処理
      */
     const handleAllMemoPress = () => {
+        dispatch(setLabelId(null))
         router.push({
             pathname: "/memos"
         });
@@ -54,10 +59,14 @@ export default function HomeScreen() {
      * @param labelId 
      */
     const handleLabelPress = (labelId: number) => {
-        const params = { labelId: labelId };
-        router.push({
-            pathname: "/memos", params: params
-        })
+        //クエリパラメーターでlabelIdを渡す。
+        //遷移先では、useLocalSearchparams()フックで取得する
+        //const params = { labelId: labelId };
+        // router.push({
+        //     pathname: "/memos", params: params
+        // })
+        dispatch(setLabelId(labelId))
+        router.push({ pathname: "memos" });
 
     };
 

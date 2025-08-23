@@ -1,5 +1,10 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import { Input, InputField, VStack } from "@gluestack-ui/themed";
+import {  useState } from 'react';
+import { ColorPicker } from '../../src/components/ColorPicker';
+import { Button, ButtonText } from "@gluestack-ui/themed";
+
 
 /**
  * ラベル修正画面
@@ -7,7 +12,13 @@ import { Button, StyleSheet, Text, View } from 'react-native';
  */
 export default function LabelEditScreen(): React.JSX.Element {
   const { id } = useLocalSearchParams();
+  const [labelName, setLabelName] = useState<string>("");
+  const [color, setColor] = useState<string | undefined>(undefined);
 
+  const handleColorPress = (color: string) => {
+        setColor(color);
+  };
+  
   /**
    * 「修正」が押されたときの処理
    */
@@ -15,10 +26,27 @@ export default function LabelEditScreen(): React.JSX.Element {
     router.dismiss();
   };
 
+  const handleDeletePress = () => {
+    router.dismiss();
+  };
+
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>ラベル修正: {id}</Text>
-      <Button title="ラベル修正" onPress={handleEditPress} />
+      <VStack space="lg">
+        <Input variant="underlined" size="md" backgroundColor="$white" borderColor="$warmGray300">
+          <InputField paddingLeft={"$2"} placeholder="ラベル名" onChangeText={setLabelName} />
+        </Input>
+        <ColorPicker onPress={handleColorPress} />
+        <VStack space="md">
+          <Button size="md" action="primary" marginHorizontal={"$4"} onPress={handleEditPress} >
+            <ButtonText>修正</ButtonText>
+          </Button>
+          <Button size="md" action="negative" marginHorizontal={"$4"} onPress={handleDeletePress} >
+            <ButtonText>修正</ButtonText>
+          </Button>
+        </VStack>
+      </VStack>
     </View>
   );
 }
@@ -26,12 +54,6 @@ export default function LabelEditScreen(): React.JSX.Element {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
     backgroundColor: '#efeff4'
   },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold'
-  }
 });
