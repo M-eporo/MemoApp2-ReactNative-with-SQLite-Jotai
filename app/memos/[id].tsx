@@ -3,7 +3,7 @@ import { useEffect,useState } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
 import MemoInputForm  from "../../src/components/MemoInputForm";
 import { KeyboardAvoidingView } from '@gluestack-ui/themed';
-
+import { MEMO_DATA } from '../../src/dummy_data/memoData';
 
 /**
  * 
@@ -22,7 +22,14 @@ export default function MemoEditScreen(): React.JSX.Element {
               return <Button title="保存" onPress={handleSavePress} />;
           }
       })
-  }, [])
+  }, []);
+  useEffect(() => {
+    const memo = MEMO_DATA.find(memo => memo.id === id);
+    if (memo) {
+      setTitle(memo.title);
+      setContent(memo.content);
+    }
+  },[id]);
   /**
    * 「保存」が押されたときの処理
    */

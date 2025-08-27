@@ -1,20 +1,45 @@
 import { router } from 'expo-router';
 import { useEffect } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, Alert } from 'react-native';
+import * as LabelService from "../src/services/labelService";
+import * as MemoService from "../src/services/memoService";
+import { getDbFilePath } from '../src/database/dbService';
+import { get } from '@gluestack-style/react';
 
 /**
- * 
+ * App起動時の処理
  * @returns 
  */
 
 export default function InitialScreen() {
 
     useEffect(() => {
-        const timer = setTimeout(() => {
+        initApp();
+    }, []);
+
+    /**
+     * アプリ初期化処理
+     */
+    const initApp = async () => {
+        try {
+            //テーブル作成処理
+            await LabelService.createTable();
+            await MemoService.createTable();
+            console.log(getDbFilePath());
             router.replace("/home");
-        })
-        return () => clearTimeout(timer);
-    }, [])
+        }catch(error) {
+            console.error("アプリ起動エラー：", error);
+            Alert.alert("エラー", "アプリの起動に失敗しました。", [
+                {
+                    text: "再起動",
+                    onPress: () => {
+                        initApp();
+                    }
+                }
+            ])
+            throw error;
+        }
+    };
 
     return (
         <View style={styles.container}>
