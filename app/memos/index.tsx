@@ -1,7 +1,7 @@
 import Feather from '@expo/vector-icons/Feather';
-import { router, useNavigation } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
+import { router, useNavigation, useFocusEffect } from 'expo-router';
+import { useEffect, useState, useCallback } from 'react';
+import { Alert, FlatList, StyleSheet, View } from 'react-native';
 import LabelListModal from '../../src/components/LabelListModal';
 import LabelTag from '../../src/components/LabelTag';
 import MemoListItem from '../../src/components/MemoListItem';
@@ -10,6 +10,7 @@ import { LABEL_DATA } from '../../src/dummy_data/labelData';
 import { MEMO_DATA } from '../../src/dummy_data/memoData';
 import { Label } from '../../src/types/label';
 import { Memo } from '../../src/types/memo';
+import * as MemoService from "../../src/services/memoService";
 
 /**
  *  メモ一覧画面
@@ -34,15 +35,27 @@ export default function MemoListScreen(): React.JSX.Element {
     });
   }, []);
 
-  useEffect(() => {
-    //ラベルリストの設定
-    const labels = LABEL_DATA;
-    setLabels(labels);
-    //メモリストの設定
-    //
-    const filteredMemos = selectedLabelId ? MEMO_DATA.filter(memo => memo.labelId === selectedLabelId) : MEMO_DATA;
-    setMemos(filteredMemos);
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      const loadData = async(labelId: number | null) => {
+        try {
+          const labels = LABEL_DATA;
+          setLabels(labels);
+
+          const memos = await MemoService.getMemos();
+          const filteredMemos = labelId ? memos.filter(memo => memo.labelId === selectedLabelId) : memos;
+          setMemos(filteredMemos);
+        } catch(error) {
+          Alert.alert("エラー", "データの取得に失敗しました。", [{
+            text: "OK",
+            onPress: () => router.back()
+          }])
+        }
+      };
+      loadData(selectedLabelId);
+    },[selectedLabelId])
+  )
+
 
   /**
    * 「メモ作成」が押されたときの処理
