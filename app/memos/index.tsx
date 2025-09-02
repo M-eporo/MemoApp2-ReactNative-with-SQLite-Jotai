@@ -7,9 +7,9 @@ import LabelTag from '../../src/components/LabelTag';
 import MemoListItem from '../../src/components/MemoListItem';
 import { useAppSelector } from '../../src/store/hooks';
 import { LABEL_DATA } from '../../src/dummy_data/labelData';
-import { MEMO_DATA } from '../../src/dummy_data/memoData';
 import { Label } from '../../src/types/label';
 import { Memo } from '../../src/types/memo';
+import { Indicator } from '../../src/components/Indicator';
 import * as MemoService from "../../src/services/memoService";
 
 /**
@@ -21,6 +21,7 @@ export default function MemoListScreen(): React.JSX.Element {
   const [isLabelListModalVisible, setIsLabelListModalVisible] = useState(false);
   //選択されているラベルID
   const selectedLabelId = useAppSelector(state => state.label.id);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [labels, setLabels] = useState<Label[]>([]);  //Label List
   const [memos, setMemos] = useState<Memo[]>([]); //Memo List
@@ -82,8 +83,21 @@ export default function MemoListScreen(): React.JSX.Element {
     setIsLabelListModalVisible(true);
   };
 
-  const handleMemoDeletePress = (memoId: string) => {
-    console.log('メモが削除されました。', memoId);
+  /**
+   * メモの削除が押された時の処理
+   * @param memoId 削除対象のメモID
+   */
+  const handleMemoDeletePress = async (memoId: string) => {
+    setIsLoading(true);
+
+    try {
+      await MemoService.deleteMemo(memoId);
+      setMemos(memos.filter(memo => memo.id !== memoId));
+    } catch(error){
+      Alert.alert("エラー", "メモの削除に失敗しました。", [{text: "OK", }]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   /**
@@ -134,6 +148,7 @@ export default function MemoListScreen(): React.JSX.Element {
         onPress={handleLabelPress}
         onClose={handleLabelListModalClose}
       />
+      <Indicator visible={isLoading} />
     </View>
   );
 }

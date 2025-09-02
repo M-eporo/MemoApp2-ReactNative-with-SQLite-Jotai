@@ -33,6 +33,27 @@ const getMemos = async (): Promise<Memo[]> => {
 }
 
 /**
+ * 指定IDのメモ取得
+ * @param memoId 
+ * @returns 
+ */
+const getMemo = async (memoId: string): Promise<Memo | undefined> => {
+    const rows = await fetch<MemoSchema>({ sql: MemoQueries.SELECT_MEMO_TARGET_ID, params: [memoId] });
+
+    if(rows.length === 0) {
+        return undefined;
+    }
+
+    const row = rows[0];
+    return {
+        id: row.id,
+        title: row.title,
+        content: row.content || "",
+        labelId: row.label_id || undefined,
+    }
+};
+
+/**
  * メモ追加
  * @param title
  * @param content 
@@ -43,6 +64,23 @@ const addMemo = async (title: string, content: string) => {
         sql:MemoQueries.INSERT,
         params: [memoId,title,content]
     })
-}
+};
 
-export { createTable, addMemo, getMemos };
+/**
+ * メモ修正
+ * @params memoId 修正対象のID
+ */
+
+const editMemo = async (memoId: string, title: string, content: string) => {
+    await execute({ sql: MemoQueries.UPDATE, params: [title, content, memoId]})
+};
+
+/**
+ * メモの削除
+ * @param memoId 削除対象のメモのID
+ */
+const deleteMemo = async (memoId: string) => {
+    await execute({ sql: MemoQueries.DELETE, params: [memoId]});
+};
+
+export { createTable, addMemo, getMemos, getMemo, editMemo, deleteMemo };

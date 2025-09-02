@@ -35,6 +35,19 @@ const SelectMemos = `
         m.updated_at DESC;
 `;
 
+const SelectMemoTargetId = `
+    SELECT
+        id,
+        label_id,
+        title,
+        content,
+        created_at,
+        updated_at,
+    FROM
+        memos;
+    WHERE 
+        id = ?;
+`;
 
 /**
  * メモ追加
@@ -52,12 +65,38 @@ const InsertMemo = `
         ?,
         ?
     );
-`
+`;
 
+/**
+ * メモの更新
+ */
+const UpdateMemo = `
+    UPDATE
+        memos
+    SET
+        title =?,
+        content = ?,
+        updated_at = (DATETIME('now', 'localtime'))
+    WHRERE
+        id = ?;
+`
+/**
+ * メモの削除
+ * @param id メモID
+ */
+const DeleteMemo = `
+    DELETE FROM
+        memos
+    WHERE
+        id = ?;
+`
 const MemoQueries = Object.freeze({
     CREATE_TABLE: CreateTableMemos,
     SELECT_MEMOS: SelectMemos,
+    SELECT_MEMO_TARGET_ID: SelectMemoTargetId,
     INSERT: InsertMemo,
+    UPDATE: UpdateMemo,
+    DELETE: DeleteMemo,
 });
 
 export { MemoQueries };
